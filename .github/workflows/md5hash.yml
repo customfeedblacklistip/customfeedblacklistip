@@ -3,7 +3,7 @@ name: Generate MD5 Hash
 on:
   push:
     paths:
-      - 'customfeed.txt'  # Trigger when blocklist.txt is modified
+      - 'customfeed.txt'  # Trigger when customfeed.txt is modified
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
       - name: Generate MD5 Hash
         run: |
           echo "Calculating MD5 Hash for blocklist.txt..."
-          md5sum blocklist.txt | tee md5_output.txt
+          md5sum customfeed.txt | tee md5_output.txt
           echo "MD5 Hash Calculated!"
 
       - name: Upload MD5 Hash as Artifact
