@@ -19,7 +19,7 @@ jobs:
       - name: Generate MD5 Hash
         run: |
           echo "Calculating MD5 Hash for blocklist.txt..."
-          md5sum| tee md5_output.txt
+          md5sum customfeed.txt | cut -d ' ' -f1 | tee md5_output.txt
           echo "MD5 Hash saved to md5_output.txt."
 
       - name: Commit and Push MD5 Output
