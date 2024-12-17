@@ -1,9 +1,9 @@
-name: Generate MD5 Hash
+name: Generate and Upload MD5 Hash
 
 on:
   push:
     paths:
-      - 'customfeed.txt'  # Trigger when blocklist.txt is modified
+      - 'customfeed.txt'  # Trigger when customfeed.txt is modified
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
@@ -13,21 +13,27 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true  # Ensures the GitHub token is available for pushing changes
 
       - name: Generate MD5 Hash
         run: |
           echo "Calculating MD5 Hash for blocklist.txt..."
-          md5sum customfeed.txt | tee md5_output.txt
-          echo "MD5 Hash Calculated!"
+          md5sum| tee md5_output.txt
+          echo "MD5 Hash saved to md5_output.txt."
 
-      - name: Upload MD5 Hash as Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: md5-hash
-          path: md5_output.txt
-          if-no-files-found: error  # Ensure it fails if the file is missing
-          retention-days: 7         # Optional: Set how long the artifact is retained
-
-      - name: Output MD5 Hash to Logs
+      - name: Commit and Push MD5 Output
         run: |
-          cat md5_output.txt
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          
+          # Add the generated file to the repository
+          git add md5_output.txt
+          
+          # Commit the changes
+          git commit -m "Add generated MD5 hash for customfeed.txt"
+          
+          # Push the changes back to the repository
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
