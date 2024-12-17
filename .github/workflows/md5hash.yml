@@ -19,8 +19,8 @@ jobs:
       - name: Generate MD5 Hash
         run: |
           echo "Calculating MD5 Hash for blocklist.txt..."
-          md5sum customfeed.txt | cut -d ' ' -f1 | tee md5_output.txt
-          echo "MD5 Hash saved to md5_output.txt."
+          md5sum customfeed.txt | cut -d ' ' -f1 | tee md5output.txt
+          echo "MD5 Hash saved to md5output.txt."
 
       - name: Commit and Push MD5 Output
         run: |
@@ -28,7 +28,7 @@ jobs:
           git config --global user.email "github-actions@github.com"
           
           # Add the generated file to the repository
-          git add md5_output.txt
+          git add md5output.txt
           
           # Commit the changes
           git commit -m "Add generated MD5 hash for customfeed.txt"
