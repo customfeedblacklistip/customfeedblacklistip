@@ -1,0 +1,31 @@
+name: Generate MD5 Hash
+
+on:
+  push:
+    paths:
+      - 'customfeed.txt'  # Trigger when customfeed.txt is modified
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  generate_md5:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Generate MD5 Hash
+        run: |
+          echo "Calculating MD5 Hash for blocklist.txt..."
+          md5sum blocklist.txt | tee md5_output.txt
+          echo "MD5 Hash Calculated!"
+
+      - name: Upload MD5 Hash as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: md5-hash
+          path: md5_output.txt
+
+      - name: Output MD5 Hash to Logs
+        run: |
+          cat md5_output.txt
