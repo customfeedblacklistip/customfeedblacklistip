@@ -3,7 +3,7 @@ name: Generate MD5 Hash
 on:
   push:
     paths:
-      - 'customfeed.txt'  # Trigger when customfeed.txt is modified
+      - 'customfeed.txt'  # Trigger when blocklist.txt is modified
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Generate MD5 Hash
         run: |
@@ -21,10 +21,12 @@ jobs:
           echo "MD5 Hash Calculated!"
 
       - name: Upload MD5 Hash as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: md5-hash
           path: md5_output.txt
+          if-no-files-found: error  # Ensure it fails if the file is missing
+          retention-days: 7         # Optional: Set how long the artifact is retained
 
       - name: Output MD5 Hash to Logs
         run: |
