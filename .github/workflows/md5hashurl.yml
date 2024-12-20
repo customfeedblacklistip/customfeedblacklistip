@@ -1,0 +1,37 @@
+on:
+  push:
+    paths:
+      - 'customfeedurl.txt'  # Trigger when customfeedurl.txt is modified
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  generate_md5:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true  # Ensures the GitHub token is available for pushing changes
+
+      - name: Generate MD5 Hash
+        run: |
+          echo "Calculating MD5 Hash for blocklist.txt..."
+          md5sum customfeedurl.txt | cut -d ' ' -f1 | tee md5outputurl.txt
+          echo "MD5 Hash saved to md5outputurl.txt."
+
+      - name: Commit and Push MD5 Output
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          
+          # Add the generated file to the repository
+          git add md5outputurl.txt
+          
+          # Commit the changes
+          git commit -m "Add generated MD5 hash for customfeedurl.txt"
+          
+          # Push the changes back to the repository
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
